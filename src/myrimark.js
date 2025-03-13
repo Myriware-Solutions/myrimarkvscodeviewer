@@ -294,7 +294,7 @@ class MyriMark {
          */
         'image': (rb, url, scale=1) => {
             if (typeof scale === 'string') scale = parseFloat(scale);
-            const image = new Image();
+            const image = document.createElement('img');
             image.src = url;
             image.onload = () => {
                 let width = image.width * scale;
