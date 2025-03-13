@@ -223,7 +223,6 @@ class MyriMark {
                             this.#GlobalFunctionCommands[cmd](header_levels);
                         else return_body.append(this.MakeParagraph([`INVALID GLOBAL COMMAND {${cmd}}`]));
                     }
-                    //alert(JSON.stringify(global_commands));
                 break;
             }
         }
@@ -538,7 +537,6 @@ class MyriMark {
         return input;
     }
 
-    //<img src="" alt="pic" />
     static MakeImage(url) {
         const image = document.createElement('img');
         image.src = url;

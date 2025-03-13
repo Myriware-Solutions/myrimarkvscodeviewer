@@ -1,65 +1,66 @@
-# myrimarkvscodeviewer README
+# Myrimark: Markdown, LaTeX, & HTML Inspired Rich Text
 
-This is the README for your extension "myrimarkvscodeviewer". After writing up a brief description, we recommend including the following sections.
+Myrimark is the Myriware in-house markdown system for rich text,
+encouraged for both users and developers to use.
+It takes elements from Markdown, LaTeX, and HTML and combines them
+in a rich fashion.
+Below is the documentation for the different currently supported features.
 
-## Features
+Before you begin understanding what Myrimark can do, you must understand how
+the processing engine for it work. Currently, there is only one JS file that
+produces HTML code from the given Myrimark. Thus, a lot of what is possible
+is because of the features of HTML.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## Syntax
 
-For example if there is an image subfolder under your extension project workspace:
+First of all, everything exists in 'Paragraphs.' These are sections of 
+code that are spereated by TWO or more newlines. Thus, if there is only
+one new line, it will be added to the previous paragraph (just like Markdown/LaTex).
 
-\!\[feature X\]\(images/feature-x.png\)
+Some Paragraphs are special because they are used for lists, commands, or divisions.
+These will be covered later. However, for the special paragraphs to register, the first
+character of each line must be the SAME.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+```
+This is part of the first Paragraph.
+This is also part of the first Paragraph.
 
-## Requirements
+This is part of the second Paragraph.
+"Me as well!"
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- I am a list
+- So am I
+- Me too!
+```
 
-## Extension Settings
+## Basic Text
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+Below are the different basic text options, as well as their syntaxes.
+Effects can be used inside of each other, so long that there are both
+opening and closing sets of symbols.
+Unlike HTML, the opening sets and the closing sets do not have to be within
+only one: i.e. you can start a bold, start italics, end the bold, then end italics.
 
-For example:
+| Type        |       Syntax |
+|-------------|--------------|
+| Bold        | \*\*Text\*\* |
+| Italics     | //Text//     |
+| Underline   | \_\_Text\_\_ |
+| Strike      | \~\~Text\~\~ |
 
-This extension contributes the following settings:
+## Lists
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+There are three main types of list: numbered, dotted, and checked.
+Each one is as its name implies, and are consistered one of the 
+special cases of Paragraphs. Each line in the Paragraph must start with
+the same symbol, listed below.
 
-## Known Issues
+| Symbol | Type     |
+|--------|----------|
+| *      | Dotted   |
+| -      | Numbered |
+| >      | Checked  |
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## Commands
 
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+There are two types of commands: Global and local.
