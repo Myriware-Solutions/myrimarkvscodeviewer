@@ -9,13 +9,31 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [ ],
   "main": "./extension.js",
   "contributes": {
-    "commands": [{
-      "command": "myrimarkvscodeviewer.helloWorld",
-      "title": "Hello World"
-    }]
+    "commands": [
+            {
+                "command": "mwPreview.start",
+                "title": "Preview MW File"
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "mwPreview.start",
+                    "when": "resourceLangId == mw",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "languages": [
+          {
+            "id": "mw",
+            "extensions": [".mw"],
+            "aliases": ["MW", "mw"]
+          }
+        ]
   },
   "scripts": {
     "lint": "eslint .",
@@ -23,11 +41,14 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.98.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
-    "eslint": "^9.21.0",
+    "@types/vscode": "^1.98.0",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.21.0"
+  },
+  "dependencies": {
+    "jsdom": "^26.0.0"
   }
 }
