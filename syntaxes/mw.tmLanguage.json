@@ -1,0 +1,83 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Myrimark",
+	"patterns": [
+		{
+			"include": "#localcommand"
+		},
+		{
+			"include": "#globalcommand"
+		},
+		{
+			"include": "#groups"
+		},
+		{
+			"include": "#header"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.mw",
+				"match": "(\\$begin|\\$end)"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.mw",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.mw",
+					"match": "\\\\."
+				}
+			]
+		},
+
+		"groups": {
+			"name": "keyword.control.mw",
+			"begin": "^\\$",
+			"end": "$",
+			"patterns": [
+				{
+					"name": "support.function.mw",
+					"match": ":\\w+"
+				},
+				{
+					"name": "meta.structure.dictionary.key.python.mw",
+					"match": "{.+}"
+				}
+			]
+		},
+
+		"header": {
+			"patterns": [{
+				"name": "constant.character.mw",
+				"match": "^#.+$"
+			}]
+		},
+
+		"localcommand": {
+			"name": "support.function.mw",
+			"begin": "^:",
+			"end": "$",
+			"patterns": [
+				{
+					"name": "support.function.mw",
+					"match": ":\\w+"
+				},
+				{
+					"name": "meta.structure.dictionary.key.python.mw",
+					"match": "{.+}"
+				}
+			]
+		},
+
+		"globalcommand": {
+			"name": "support.function.mw",
+			"begin": "^\\\\",
+			"end": "$"
+		}
+	},
+	"scopeName": "source.mw"
+}

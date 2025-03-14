@@ -1,6 +1,6 @@
 {
   "name": "myrimarkvscodeviewer",
-  "displayName": "MyriMarkVSCodeViewer",
+  "displayName": "Myrimark VS Code Viewer",
   "description": "View Myrimark Code in VSCode",
   "version": "0.0.1",
   "engines": {
@@ -15,7 +15,7 @@
     "commands": [
             {
                 "command": "mwPreview.start",
-                "title": "Preview MW File"
+                "title": "Preview Myrimark File"
             }
         ],
         "menus": {
@@ -31,9 +31,15 @@
           {
             "id": "mw",
             "extensions": [".mw"],
-            "aliases": ["MW", "mw"]
+            "aliases": ["MW", "mw"],
+            "configuration": "./language-configuration.json"
           }
-        ]
+        ],
+        "grammars": [{
+          "language": "mw",
+          "scopeName": "source.mw",
+          "path": "./syntaxes/mw.tmLanguage.json"
+        }]
   },
   "scripts": {
     "lint": "eslint .",
