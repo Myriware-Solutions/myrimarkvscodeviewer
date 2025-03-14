@@ -128,7 +128,16 @@ class MyriMark {
     static ParseMyriMark(bodyText) {
         const workingBodyText = bodyText.replace(/\r/gm, '');
         const sections = this.Condense(this.BreakUp(workingBodyText));
-        return this.#parse(sections);
+        let header_levels = {
+            "h1": 0,
+            "h2": 0,
+            "h3": 0,
+            "h4": 0,
+            "h5": 0,
+            "h6": 0
+        };
+        let global_commands = [];
+        return this.#parse(sections, null, header_levels, global_commands);
     }
 
     /**
@@ -137,13 +146,13 @@ class MyriMark {
      * @param {HTMLDivElement} parent
      * @returns {?HTMLDivElement}
      */
-    static #parse(stringSections, parent=null) {
+    static #parse(stringSections, parent=null, header_levels, global_commands) {
         const body = document.createElement('div');
         for (const section of stringSections) {
             if (typeof section === 'string')
-                this.ParseMyriMarkSection(section, body);
+                this.ParseMyriMarkSection(section, body, header_levels, global_commands);
             else {
-                this.#parse(section, body);
+                this.#parse(section, body, header_levels, global_commands);
             }
         }
         if (parent) parent.append(body);
@@ -155,22 +164,15 @@ class MyriMark {
      * 
      * @param {string} myrimark_text
      * @param {HTMLDivElement} parent
+     * @param {Object.<string, number>} header_levels
+     * @param {string[]} global_commands
      * @returns {?HTMLDivElement}
      */
-    static ParseMyriMarkSection(myrimark_text, parent=null) {
+    static ParseMyriMarkSection(myrimark_text, parent=null, header_levels=null, global_commands=null) {
         const body = this.RemoveExcessWhiteSpace(myrimark_text);
         const paragraphs = body.split(this.Regexes.seperators.paragraphs);
         const return_body = document.createElement('div');
         if (parent) parent.append(return_body);
-        let header_levels = {
-            "h1": 0,
-            "h2": 0,
-            "h3": 0,
-            "h4": 0,
-            "h5": 0,
-            "h6": 0
-        };
-        let global_commands = []
         for (const paragraph of paragraphs) {
             const lines = paragraph.split('\n');
             const type = this.GetParagraphType(lines);
@@ -307,7 +309,7 @@ class MyriMark {
         'center': (rb, text) => {
             const div = document.createElement('div');
             div.classList.add('justify', 'center');
-            div.append(this.ParseMyriMarkSection(text));
+            div.append(this.ParseMyriMarkSection(text, null));
             return div;
         },
         /**

@@ -4,16 +4,35 @@ const vscode = require('vscode');
 const mwparser = require('./src/paserser.js');
 const path = require('path');
 const { JSDOM } = require('jsdom');
-//const fs = require('fs');
+const fs = require('fs');
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
+
+/**
+ * @typedef {Object} Snippet
+ * @property {string} label The Label that appears for this Snippet.
+ * @property {string} wordMatch The Word that best describes the Snippet (label without symbols).
+ * @property {string} insertText Text that will get autofilled.
+ * @property {string} detail Details about the Snippet's function.
+ * @property {string} detailHeader Header for the Hover
+ */
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
     let panel; // Store the webview panel
+    // Load snippets.json
+    const snippetsPath = path.join(context.extensionPath, 'snippets.json');
+    /** @type {Snippet[]} */
+    let snippets = [];
+    try {
+        const data = fs.readFileSync(snippetsPath, 'utf8');
+        snippets = JSON.parse(data);
+    } catch (error) {
+        console.error("Error reading snippets.json:", error);
+    }
 
     let disposable = vscode.commands.registerCommand('mwPreview.start', async () => {
         const editor = vscode.window.activeTextEditor;
@@ -45,8 +64,44 @@ function activate(context) {
     });
 
     context.subscriptions.push(disposable);
-}
+    
+    // Register completion provider
+    const completionProvider = vscode.languages.registerCompletionItemProvider(
+        'mw',
+        {
+            provideCompletionItems(document, position, token, context) {
+                return snippets.map(snippet => {
+                    const item = new vscode.CompletionItem(snippet.label, vscode.CompletionItemKind.Snippet);
+                    item.insertText = new vscode.SnippetString(snippet.insertText);
+                    item.detail = snippet.detail;
+                    return item;
+                });
+            }
+        },
+        "$", ":" // Trigger on $ and :
+    );
 
+    // Register hover provider
+    const hoverProvider = vscode.languages.registerHoverProvider('mw', {
+        provideHover(document, position, token) {
+            const range = document.getWordRangeAtPosition(position);
+            if (!range) return;
+
+            const word = document.getText(range);
+            //const snippet = snippets.find(s => { s.wordMatch === word });
+            let snippet;
+            for (const snip of snippets) {
+                if (snip.wordMatch == word) { snippet = snip; break; }
+                else snippet = null;
+            }
+            if (snippet) {
+                return new vscode.Hover(new vscode.MarkdownString(`\`\`\`${(snippet.detailHeader) ? snippet.detailHeader : snippet.label}\`\`\`\n\n${snippet.detail}`));
+            }
+        }
+    });
+
+    context.subscriptions.push(completionProvider, hoverProvider);
+}
 
 /**
  * @param {string} content

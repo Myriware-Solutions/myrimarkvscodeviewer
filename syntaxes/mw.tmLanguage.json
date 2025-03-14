@@ -36,16 +36,16 @@
 
 		"groups": {
 			"name": "keyword.control.mw",
-			"begin": "^\\$",
+			"begin": "^ *\\$",
 			"end": "$",
 			"patterns": [
 				{
-					"name": "support.function.mw",
-					"match": ":\\w+"
+					"name": "constant.character.mw",
+					"match": "(?<=\\w){\\w+}"
 				},
 				{
 					"name": "meta.structure.dictionary.key.python.mw",
-					"match": "{.+}"
+					"match": "(?<!\\w){.+}"
 				}
 			]
 		},
@@ -53,13 +53,13 @@
 		"header": {
 			"patterns": [{
 				"name": "constant.character.mw",
-				"match": "^#.+$"
+				"match": "^ *#.+$"
 			}]
 		},
 
 		"localcommand": {
 			"name": "support.function.mw",
-			"begin": "^:",
+			"begin": "^ *:",
 			"end": "$",
 			"patterns": [
 				{

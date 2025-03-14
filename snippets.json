@@ -1,0 +1,66 @@
+[
+    {
+        "label": "$begin{} ... $end",
+        "wordMatch": "begin",
+        "insertText": "begin{$1}\n\t$2\n\\$end",
+        "detail": "Creates a section in the document of ```{type}```. Some types requrie more parameters.",
+        "detailHeader": "$begin{<string>type}[?{params}...] ... $end"
+    },
+    {
+        "label": ":background_color",
+        "wordMatch": "background_color",
+        "insertText": "background_color{$1}",
+        "detail": "Sets the background color for this section. Accepts CSS colors.",
+        "detailHeader": ":background_color{<cssColor>color}"
+    },
+    {
+        "label": ":center",
+        "wordMatch": "center",
+        "insertText": "center{$1}",
+        "detail": "Centers the text provided.",
+        "detailHeader": ":center{<string>content}"
+    },
+    {
+        "label": ":padding",
+        "wordMatch": "padding",
+        "insertText": "padding{$1}",
+        "detail": "Sets the padding for this section. Accepts CSS mesurements.",
+        "detailHeader": ":padding{<cssSize>amount}"
+    },
+    {
+        "label": ":rounding",
+        "wordMatch": "rounding",
+        "insertText": "rounding{$1}",
+        "detail": "Sets the border rounding for this section. Accepts CSS mesurements.",
+        "detailHeader": ":rounding{<cssSize>amount}"
+    },
+    {
+        "label": ":hl",
+        "wordMatch": "hl",
+        "insertText": "hl{$1}",
+        "detail": "Inserts a horizontal line. Optional: Parameter will be added to the middle of the line.",
+        "detailHeader": ":hl{?<string>lineText}"
+    },
+    {
+        "label": ":image",
+        "wordMatch": "image",
+        "insertText": "image{$1}",
+        "detail": "Inserts an image, from the provided url.",
+        "detailHeader": ":image{<string>imageURL}"
+    },
+
+    {
+        "label": "\\AutoIndexHeaders",
+        "wordMatch": "AutoIndexHeaders",
+        "insertText": "AutoIndexHeaders",
+        "detail": "Enables numbering on Headers. Reset index using \\ResetHeaderIndexes.",
+        "detailHeader": ""
+    },
+    {
+        "label": "\\ResetHeaderIndexes",
+        "wordMatch": "ResetHeaderIndexes",
+        "insertText": "ResetHeaderIndexes",
+        "detail": "Resets the numbering on Headers.",
+        "detailHeader": ""
+    }
+]
