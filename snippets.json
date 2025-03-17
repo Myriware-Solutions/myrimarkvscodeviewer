@@ -3,7 +3,7 @@
         "label": "$begin{} ... $end",
         "wordMatch": "begin",
         "insertText": "begin{$1}\n\t$2\n\\$end",
-        "detail": "Creates a section in the document of ```{type}```. Some types requrie more parameters.",
+        "detail": "Creates a section in the document of ```{type}```. Some types require more parameters.",
         "detailHeader": "$begin{<string>type}[?{params}...] ... $end"
     },
     {
@@ -12,6 +12,13 @@
         "insertText": "background_color{$1}",
         "detail": "Sets the background color for this section. Accepts CSS colors.",
         "detailHeader": ":background_color{<cssColor>color}"
+    },
+    {
+        "label": ":text_color",
+        "wordMatch": "text_color",
+        "insertText": "text_color{$1}",
+        "detail": "Sets the text color for this section. Accepts CSS colors.",
+        "detailHeader": ":text_color{<cssColor>color}"
     },
     {
         "label": ":center",

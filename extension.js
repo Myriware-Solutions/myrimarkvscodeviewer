@@ -78,7 +78,7 @@ function activate(context) {
                 });
             }
         },
-        "$", ":" // Trigger on $ and :
+        "$", ":", '\\' // Trigger on $ and :
     );
 
     // Register hover provider
@@ -120,6 +120,8 @@ function createPreviewPanel(content, context) {
 
     // Load HTML content
     panel.webview.html = getWebviewContent(content, panel, context);
+
+    return panel;
 }
 
 /**

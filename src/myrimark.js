@@ -324,6 +324,15 @@ class MyriMark {
         /**
          * 
          * @param {HTMLDivElement} rb 
+         * @param {string} color 
+         */
+        'text_color': (rb, color) => {
+            rb.style.color = color;
+            return null;
+        },
+        /**
+         * 
+         * @param {HTMLDivElement} rb 
          * @param {string} amount 
          */
         'padding': (rb, amount) => {

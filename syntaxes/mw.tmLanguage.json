@@ -13,6 +13,9 @@
 		},
 		{
 			"include": "#header"
+		},
+		{
+			"include": "#texteffects"
 		}
 	],
 	"repository": {
@@ -34,6 +37,23 @@
 			]
 		},
 
+		"texteffects": {
+			"patterns": [
+				{
+					"name": "markup.italic.mw",
+					"match": "//.+//"
+				},
+				{
+					"name": "markup.bold.mw",
+					"match": "\\*\\*.+\\*\\*"
+				},
+				{
+					"name": "markup.underline.mw",
+					"match": "__.+__"
+				}
+			]
+		},
+
 		"groups": {
 			"name": "keyword.control.mw",
 			"begin": "^ *\\$",
@@ -51,9 +71,11 @@
 		},
 
 		"header": {
+			"name": "constant.character.mw",
+			"begin": "^ *#",
+			"end": "$",
 			"patterns": [{
-				"name": "constant.character.mw",
-				"match": "^ *#.+$"
+				"include": "#texteffects"
 			}]
 		},
 
