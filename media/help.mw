@@ -42,16 +42,12 @@ is the brackets, which is the desired text to be
 displayed. The second part in parenthesis is the
 URL that you want to link to. So,
 
-* If you need info, go to [Google] (www.google.com)!
+` If you need info, go to [Google](www.google.com)!
 
-Makes:
-
-* If you need info, go to [Google](https://www.google.com)!
+Makes: If you need info, go to [Google](https://www.google.com)!
 
 NOTE: There should be no space between the bracket
-and parenthesis. It is there in the example because
-currently, there is no way to try and represent it
-without actually creating it.
+and parenthesis.
 
 ## Lists
 
@@ -65,8 +61,250 @@ consitered part of the same paragraph.
 There are three kinds of lists: bullets, numbered,
 and checked. They each are how they sound, and 
 start with asterisks, hyphens, and right points,
-respectfully.
+respectfully. Here is an example:
 
+$begin{multicol}{2}{lined}
 
+    ` * One
+` * Two
+`
+` - One
+` - Two
+`
+` > One
+` > Two
+
+Makes:
+
+* One
+* Two
+
+- One
+- Two
+
+> One
+> Two
+
+$end
+
+## Code
+
+If you want to be able to display something
+like code, then you can use a code-paragraph.
+These are obtained using bask-ticks at the 
+start of each line. There is no text processing
+on any line in a code-paragraph.
+
+## Headers
+
+Headers are used to section up a document. These
+follow the same convention in Markup, that is,
+using hashtags will produce a header. These
+need to be in their own paragraph, or, you can
+put multiple headers together in the same paragraph.
+You can have up to six layers of headers, so
+up to six hashtags.
+
+NOTE: There are some commands that affect the
+behavior of the Headers, such as the numbering
+in this document.
+
+# Commands
+
+Commands are useful and allow for more than just
+nice text. The previous section was modified
+Markup, this section brings in LaTeX to provide
+more than just text.
+
+Commands are split up into two types: Local and 
+Global. Local commands are things that affect
+only the section they are in, or, they display 
+something in the document. Global commands
+handle more under-the-hood things, and do
+not normally affect the flow of the document.
+The biggest difference is that Local commands
+accept input, while Gobal commands do not.
+
+## Local Commands
+
+Local commands follow a simple structure:
+
+` :command_name[{param}]...
+
+The command definition starts with a colon,
+then followed by the command name, and then
+any parameters inside of curly brakets.
+Note there is no spaceing between any of these
+elements. In this help document, you will be able
+to read and learn about all the command options
+availiable. Jump to Section 4.1 to find them.
+
+## Global Commands
+
+Global commands follow a likewise easy syntax: 
+
+` \CommandName
+
+Global commands are effective once they are called,
+and get removed from function when they are called
+again. They do not accept any inputs. Go to 
+section 4.2 for Global Commands.
+
+## Sections
+
+The last important thing to learn about Myrimark is 
+how sections work. These are groups of paragraphs
+and other sections. To create one, follow the syntax below:
+
+` $/sp/begin{type}[{params}...]
+` /sp/  section stuff...
+` $/sp/end
+
+Remember, local command only work //inside//
+the sections, but Global command aren't
+restricted. In Section 4.3, you will find the
+types you can use.
+
+# Command and Section Reference
+
+At this point, you have gotten through all 
+the stuff you need to know to get started.
+This section will describe the different
+functions and section avaible.
+
+## Local Commands
+
+Before diving into these, it is important to 
+note that there are a lot of times that
+the input will say `css` something. This is 
+because Myrimark outputs in HTML, meaning,
+a lot of things will be configure in css.
+Thus, there is also a lot of flexiblity that 
+comes with this. Common types for params include:
+
+* string: any text.
+* number: a number, normally an integer unless specified.
+* cssColor: Some form of css color, like `salmon` or `#FFFFFF`.
+* cssSize: A size in css, such as `1em` or `15%`.
+
+It might be helpful to look online about these different css
+mesures for full understanding of how to use them.
+
+### Background Color 
+
+`:background_color{color:cssColor}`
+Sets the background color of a section.
+Note that the theme that you use
+for VS Code may automatically change the 
+defualt background.
+
+`:background_color{red}
+`
+`This color is really cool!
+
+$begin{paragraph}
+    :background_color{red}
+
+    This color is really cool!
+
+$end
+
+### Text Color
+
+`:text_color{white:cssColor}`
+Sets the color of the text.
+Note that the theme for VS Code
+may automatically change the text color.
+
+`:background_color{red}
+`:text_color{blue}
+`
+`I am blue on red!
+
+$begin{paragraph}
+    :background_color{red}
+    :text_color{blue}
+
+    I am blue on red!
+$end
+
+### Padding 
+
+`:padding{amount:cssSize}`
+Sets the padding of a section.
+
+` :padding{1em}
+`
+` This is something that has padding.
+
+$begin{paragraph}
+    :padding{1em}
+
+    This is something that has padding.
+
+$end
+
+### Rounding 
+
+`:rounding{amound:cssSize}`
+Sets the rounding of a section. Does not
+do anything visably without setting a background 
+color.
+
+`:background_color{red}
+`:rounding{1em}
+`:padding{1em}
+`
+`A little piece of body text.
+
+$begin{paragraph}
+    :background_color{red}
+    :rounding{1em}
+    :padding{1em}
+
+    A little piece of body text.
+    
+$end
+
+### Image 
+
+`:image{url:string}`
+Imports an image from the specified URL.
+
+### Horizontal Line
+
+`:hl{?text:string}`
+Creates a horizontal line. If the `?text`
+parameter is set, then it will place the 
+text in the middle of the line.
+
+`:hl{A line}
+
+:hl{A Line}
+
+NOTE: Right now, the VS Code version
+of Myrimark is not displaying the text 
+that is inputted.
+
+## Global Commands
+
+### `\AutoIndexHeaders`
+
+Automatically Indexes all the Headers 
+in the affected zone of control.
+
+### `\ResetHeaderIndexes`
+
+Sets all of the Header indexes to one,
+restarting the indexing count.
+
+### `\EveryLineBreaks`
+
+Turns the two newline required space to 
+differenciate paragraphs to just one,
+turning every line in the effected zone
+into its wn paragraph.
+
+## Sections
 
 $end

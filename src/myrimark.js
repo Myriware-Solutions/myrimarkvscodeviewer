@@ -95,7 +95,8 @@ class MyriMark {
             'superscript': /(?<!\\):\^(.*?)(?<!\\):/gm
         },
         'cmd_line': {
-            'stacked_scripts': /(?<!\\):_\^{(.*?)(?<!\\)}{(.*?)(?<!\\)}:/gm
+            'stacked_scripts': /(?<!\\):_\^{(.*?)(?<!\\)}{(.*?)(?<!\\)}:/gm,
+            'code_line': /(?<!\\)`(.*?)(?<!\\)`/gm
         },
         'adv_line': {
             'hyperlink': /\[(.+)\]\((.+)\)/gm,
@@ -189,6 +190,9 @@ class MyriMark {
                 case 'checks':
                     return_body.append(this.MakeChecks(lines));
                 break;
+                case 'code':
+                    return_body.append(this.MakeCodeBlock(lines));
+                break;
                 case 'null':
                 break;
                 case 'localcommand':
@@ -263,6 +267,8 @@ class MyriMark {
                 return 'globalcommand';
                 case '$':
                 return 'null';
+                case '`':
+                return 'code';
             }
         }
         let beginings = [];
@@ -277,6 +283,8 @@ class MyriMark {
             return 'checks';
             case '#':
             return 'header';
+            case '`':
+            return 'code';
             case '\\':
             return 'globalcommand';
             case ':':
@@ -554,6 +562,20 @@ class MyriMark {
         image.alt = url;
         return image;
     }
+    
+    /**
+     * 
+     * @param {string[]} lines
+     * @returns {HTMLPreElement}
+     */
+    static MakeCodeBlock(lines) {
+        const block = document.createElement('pre');
+        block.innerHTML = lines.join('\n')
+        .replace(/^\` */gm, '')
+        .replace(/(?<!\\)\/sp\//gm, '')
+        .replaceAll('<', '&gt;');
+        return block;
+    }
 
     /**
      * 
@@ -569,6 +591,9 @@ class MyriMark {
                 switch (type) {
                     case "stacked_scripts":
                         filler = `<span class="stacked"><span class="lower">${g[2]}</span><span class="upper">${g[1]}</span></span>`;
+                    break;
+                    case 'code_line':
+                        filler = `<code class="inline-code">${g[1]}</code>`
                     break;
                 }
                 fline = fline.replaceAll(g[0], filler);

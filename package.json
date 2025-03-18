@@ -34,8 +34,8 @@
             "aliases": ["MW", "mw"],
             "configuration": "./language-configuration.json",
             "icon": {
-              "light": "./icon/MyrimarkIcon.svg",
-              "dark": "./icon/MyrimarkIcon.svg"
+              "light": "./icon/MyrimarkLangIcon.svg",
+              "dark": "./icon/MyrimarkLangIcon.svg"
             }
           }
         ],

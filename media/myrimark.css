@@ -68,6 +68,11 @@ div.myrimark-container {
             display: none;
         }
     }
+
+    code {
+        font-family: 'Courier New', Courier, monospace;
+        &.inline-code { display: inline; }
+    }
 }
 
 /* @media (prefers-color-scheme: light) { }
