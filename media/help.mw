@@ -1,4 +1,72 @@
-# Header
+\AutoIndexHeaders
 
-Just a bunch of things that are really cool.
-I mean, they are really, really cool.
+$begin{paragraph}{justify}
+
+# Myrimark Help
+
+Myrimark is the Myriware in-house markup language,
+which is used for both users and developers.
+It is a combination of the syntaxes and features
+of Markup and LaTeX. Since the code is processed
+and viewed as HTML, it also used a lot of the 
+same things as CSS (for example, color names
+and size measurements). Myrimark is adaptive and 
+ever-changing, so this manual will make overviews
+of the basic functions.
+
+# The Basics
+## Text
+
+This section will cover the basics of Myrimark.
+These are simple text features, and are very 
+similar to Markup. Here are the simple text 
+effects present in Myrimark. Each effect requries
+an open and close set of characters, which you
+can find next to their names below.
+
+* //Italics// \// \//
+* **Bold** \** \**
+* __Underline__ \__ \__
+* ~~Strikethrough~~ \~~ \~~
+
+You can use these effects even inside of each 
+other, and sets do not have to stay nested.
+For example, you can start italics, start bold,
+end italics, and then end bold.
+
+## Hyperlinks
+
+Hyperlinks are achieved by using two things, 
+inside of parenthesis and brackets. The first part
+is the brackets, which is the desired text to be
+displayed. The second part in parenthesis is the
+URL that you want to link to. So,
+
+* If you need info, go to [Google] (www.google.com)!
+
+Makes:
+
+* If you need info, go to [Google](https://www.google.com)!
+
+NOTE: There should be no space between the bracket
+and parenthesis. It is there in the example because
+currently, there is no way to try and represent it
+without actually creating it.
+
+## Lists
+
+List are achieved by making an entire paragraph
+start with the same character, wach on a newline.
+For context, a paragraph is the unit of text between
+two or more return lines. So, it there is text 
+on the immediete next line, then it will be
+consitered part of the same paragraph.
+
+There are three kinds of lists: bullets, numbered,
+and checked. They each are how they sound, and 
+start with asterisks, hyphens, and right points,
+respectfully.
+
+
+
+$end

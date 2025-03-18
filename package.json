@@ -32,7 +32,11 @@
             "id": "mw",
             "extensions": [".mw"],
             "aliases": ["MW", "mw"],
-            "configuration": "./language-configuration.json"
+            "configuration": "./language-configuration.json",
+            "icon": {
+              "light": "./icon/MyrimarkIcon.svg",
+              "dark": "./icon/MyrimarkIcon.svg"
+            }
           }
         ],
         "grammars": [{
