@@ -16,6 +16,7 @@ class MyriMark {
     constructor (doc=null) {
         if (doc)
             this.document = doc;
+        // eslint-disable-next-line
         else this.document = document;
     }
 
@@ -667,5 +668,6 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = { MyriMark }; // For Node.js
 } else {
     // @ts-ignore
+    // eslint-disable-next-line
     window.MyriMark = MyriMark;
 }
