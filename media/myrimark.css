@@ -69,9 +69,16 @@ div.myrimark-container {
         }
     }
 
-    code {
+    pre {
         font-family: 'Courier New', Courier, monospace;
-        &.inline-code { display: inline; }
+        background-color: #424141;
+        border-radius: 0.25em;
+        color: white;
+        padding: 0.5em;
+        &.inline-code { 
+            display: inline;
+            padding: 0;
+        }
     }
 }
 

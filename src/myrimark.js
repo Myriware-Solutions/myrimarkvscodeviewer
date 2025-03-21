@@ -593,7 +593,7 @@ class MyriMark {
                         filler = `<span class="stacked"><span class="lower">${g[2]}</span><span class="upper">${g[1]}</span></span>`;
                     break;
                     case 'code_line':
-                        filler = `<code class="inline-code">${g[1]}</code>`
+                        filler = `<pre class="inline-code">${g[1]}</pre>`
                     break;
                 }
                 fline = fline.replaceAll(g[0], filler);

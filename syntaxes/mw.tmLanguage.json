@@ -41,15 +41,19 @@
 			"patterns": [
 				{
 					"name": "markup.italic.mw",
-					"match": "//.+//"
+					"match": "(?<!\\\\)//.+?(?<!\\\\)//"
 				},
 				{
 					"name": "markup.bold.mw",
-					"match": "\\*\\*.+\\*\\*"
+					"match": "\\*\\*"
 				},
 				{
 					"name": "markup.underline.mw",
-					"match": "__.+__"
+					"match": "(?<!\\\\)__.+?(?<!\\\\)__"
+				},
+				{
+					"name": "markup.inline.raw.mw",
+					"match": "(?<!\\\\)`.*?(?<!\\\\)`"
 				}
 			]
 		},
