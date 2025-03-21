@@ -103,6 +103,12 @@
 			"name": "support.function.mw",
 			"begin": "^\\\\",
 			"end": "$"
+		},
+
+		"blockcode": {
+			"name": "markup.raw.mw",
+			"begin": "^`",
+			"end": "$"
 		}
 	},
 	"scopeName": "source.mw"
