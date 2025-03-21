@@ -45,7 +45,7 @@
 				},
 				{
 					"name": "markup.bold.mw",
-					"match": "\\*\\*"
+					"match": "(?<!\\\\)\\*\\*.+?(?<!\\\\)\\*\\*"
 				},
 				{
 					"name": "markup.underline.mw",

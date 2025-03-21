@@ -1,5 +1,9 @@
 const fs = require('fs');
 const { MyriMark } = require('./myrimark.js')
+const { JSDOM } = require('jsdom');
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+const { window } = dom;
+const document = window.document;
 
 /**
  * @param {fs.PathOrFileDescriptor} filePath
@@ -23,7 +27,8 @@ function parseMwFile(filePath) {
  * @returns {?HTMLDivElement}
  */
 function processMwData(rawData) {
-    return MyriMark.ParseMyriMark(rawData);
+    const MyrimarkController = new MyriMark(document);
+    return MyrimarkController.ParseMyriMark(rawData);
 }
 
 module.exports = { parseMwFile };
