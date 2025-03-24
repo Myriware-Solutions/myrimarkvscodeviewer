@@ -100,9 +100,10 @@
 		},
 
 		"globalcommand": {
-			"name": "support.function.mw",
-			"begin": "(?<!\\\\)\\\\\\w",
-			"end": "\\b"
+			"patterns": [{
+				"name": "support.function.mw",
+				"match": "(?<!\\\\)\\\\\\w+?\\b"
+			}]
 		},
 
 		"blockcode": {
