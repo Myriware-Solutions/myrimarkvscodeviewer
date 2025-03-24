@@ -102,7 +102,7 @@
 		"globalcommand": {
 			"name": "support.function.mw",
 			"begin": "^\\\\",
-			"end": "$"
+			"end": "\\b"
 		},
 
 		"blockcode": {

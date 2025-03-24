@@ -141,6 +141,24 @@ class MyriMark {
         }
     }
 
+    #SimpleGlobalSymbols = {
+        '\n': /(?<!\\)\\par\b/gm,
+        '\u0009': /(?<!\\)\\indent\b/gm
+    }
+
+    /**
+     * Replaces Global Symbols with their respective symbols.
+     * @param {string} text Input Myrimark.
+     * @returns {string}
+     */
+    #replaceGlobalSymbols(text) {
+        let return_text = text;
+        for (const [replace, symbol] of Object.entries(this.#SimpleGlobalSymbols)) {
+            return_text = return_text.replace(symbol, replace);
+        }
+        return return_text;
+    }
+
     /**
      * Takes a string of text, and parses it for Myrimark. 
      * If there is nothing that fits
@@ -191,7 +209,8 @@ class MyriMark {
      * @returns {?HTMLDivElement}
      */
     ParseMyriMarkSection(myrimark_text, parent=null) {
-        const body = this.#removeExcessWhiteSpace(myrimark_text);
+        let body = this.#removeExcessWhiteSpace(myrimark_text);
+        body = this.#replaceGlobalSymbols(body);
         const paragraphs = body.split(this.#Regexes.seperators.paragraphs);
         const return_body = this.#document.createElement('div');
         if (parent) parent.append(return_body);
