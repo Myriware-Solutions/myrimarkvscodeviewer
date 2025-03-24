@@ -101,7 +101,7 @@
 
 		"globalcommand": {
 			"name": "support.function.mw",
-			"begin": "^\\\\",
+			"begin": "(?<!\\\\)\\\\\\w",
 			"end": "\\b"
 		},
 
