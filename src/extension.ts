@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
-const mwparser = require('./src/paserser.js');
+const mwparser = require('./paserser.js');
 const path = require('path');
 const { JSDOM } = require('jsdom');
 const fs = require('fs');

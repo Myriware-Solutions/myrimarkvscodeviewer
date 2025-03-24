@@ -2,6 +2,9 @@
   "name": "myrimarkvscodeviewer",
   "displayName": "Myrimark VS Code Viewer",
   "description": "View Myrimark Code in VSCode",
+  "repository": {
+    "url": "https://github.com/Myriware-Solutions/myrimarkvscodeviewer"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.98.0"
@@ -9,46 +12,60 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [ ],
-  "main": "./extension.js",
+  "activationEvents": [],
+  "main": "./extension/extension.js",
   "contributes": {
     "commands": [
-            {
-                "command": "mwPreview.start",
-                "title": "Preview Myrimark File"
-            }
+      {
+        "command": "mwPreview.start",
+        "title": "Preview Myrimark File"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "mwPreview.start",
+          "when": "resourceLangId == mw",
+          "group": "navigation"
+        }
+      ]
+    },
+    "languages": [
+      {
+        "id": "mw",
+        "extensions": [
+          ".mw"
         ],
-        "menus": {
-            "editor/context": [
-                {
-                    "command": "mwPreview.start",
-                    "when": "resourceLangId == mw",
-                    "group": "navigation"
-                }
-            ]
-        },
-        "languages": [
-          {
-            "id": "mw",
-            "extensions": [".mw"],
-            "aliases": ["MW", "mw"],
-            "configuration": "./language-configuration.json",
-            "icon": {
-              "light": "./icon/MyrimarkLangIcon.svg",
-              "dark": "./icon/MyrimarkLangIcon.svg"
-            }
-          }
+        "aliases": [
+          "MW",
+          "mw"
         ],
-        "grammars": [{
-          "language": "mw",
-          "scopeName": "source.mw",
-          "path": "./syntaxes/mw.tmLanguage.json"
-        }]
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icon/MyrimarkLangIcon.svg",
+          "dark": "./icon/MyrimarkLangIcon.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mw",
+        "scopeName": "source.mw",
+        "path": "./syntaxes/mw.tmLanguage.json"
+      }
+    ]
   },
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "compile": "npm run check-types && node esbuild.js",
+    "check-types": "tsc --noEmit",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "vscode:prepublish": "npm run package",
+    "package": "npm run check-types && node esbuild.js --production"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
@@ -56,7 +73,9 @@
     "@types/vscode": "^1.98.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
-    "eslint": "^9.21.0"
+    "esbuild": "^0.25.1",
+    "eslint": "^9.21.0",
+    "typescript": "^5.8.2"
   },
   "dependencies": {
     "jsdom": "^26.0.0"

@@ -1,66 +1,28 @@
-# Myrimark: Markdown, LaTeX, & HTML Inspired Rich Text
+# Myrimark Developement
 
-Myrimark is the Myriware in-house markdown system for rich text,
-encouraged for both users and developers to use.
-It takes elements from Markdown, LaTeX, and HTML and combines them
-in a rich fashion.
-Below is the documentation for the different currently supported features.
+To set up the developemnt evirement, you need
+to first install and set up a few things:
 
-Before you begin understanding what Myrimark can do, you must understand how
-the processing engine for it work. Currently, there is only one JS file that
-produces HTML code from the given Myrimark. Thus, a lot of what is possible
-is because of the features of HTML.
+* Typescript
+* VSCE
+* Recomended Extensions
+* Node
+* Node packages
 
-## Syntax
+Here are the folling npm commands you should follow.
 
-First of all, everything exists in 'Paragraphs.' These are sections of 
-code that are spereated by TWO or more newlines. Thus, if there is only
-one new line, it will be added to the previous paragraph (just like Markdown/LaTex).
+```console
+npm install --save-exact --save-dev esbuild
+npm install typescript --save-dev
+npm install -g @vscode/vsce
 
-Some Paragraphs are special because they are used for lists, commands, or divisions.
-These will be covered later. However, for the special paragraphs to register, the first
-character of each line must be the SAME.
-
-```
-This is part of the first Paragraph.
-This is also part of the first Paragraph.
-
-This is part of the second Paragraph.
-"Me as well!"
-
-- I am a list
-- So am I
-- Me too!
+npm install
 ```
 
-## Basic Text
+To build the application, you can run the following code in the terminal:
 
-Below are the different basic text options, as well as their syntaxes.
-Effects can be used inside of each other, so long that there are both
-opening and closing sets of symbols.
-Unlike HTML, the opening sets and the closing sets do not have to be within
-only one: i.e. you can start a bold, start italics, end the bold, then end italics.
+```console
+vsce package
+````
 
-| Type        |       Syntax |
-|-------------|--------------|
-| Bold        | \*\*Text\*\* |
-| Italics     | //Text//     |
-| Underline   | \_\_Text\_\_ |
-| Strike      | \~\~Text\~\~ |
-
-## Lists
-
-There are three main types of list: numbered, dotted, and checked.
-Each one is as its name implies, and are consistered one of the 
-special cases of Paragraphs. Each line in the Paragraph must start with
-the same symbol, listed below.
-
-| Symbol | Type     |
-|--------|----------|
-| *      | Dotted   |
-| -      | Numbered |
-| >      | Checked  |
-
-## Commands
-
-There are two types of commands: Global and local.
+Everything from there should work.
