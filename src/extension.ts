@@ -23,6 +23,7 @@ type Snippet = {
 function activate(context:vscode.ExtensionContext) {
     console.log("Myrimark Extension Active!");
     let panel:vscode.WebviewPanel; // Store the webview panel
+    let doc_panel:vscode.WebviewPanel;
     // Load snippets.json
     const snippetsPath = path.join(context.extensionPath, 'media', 'snippets.json');
     let snippets: Snippet[] = [];
@@ -55,14 +56,24 @@ function activate(context:vscode.ExtensionContext) {
     });
 
     // Listen for file changes
-    vscode.workspace.onDidChangeTextDocument(async (event) => {
+    let onchange_disposable = vscode.workspace.onDidChangeTextDocument(async (event) => {
         if (panel && event.document.languageId === 'mw') {
             const parsedContent = await parseMwFile(event.document.uri.fsPath);
             panel.webview.html = getWebviewContent(parsedContent, panel, context);
         }
     });
 
-    context.subscriptions.push(disposable);
+    let open_docs_disposable = vscode.commands.registerCommand('mwPreview.documentation', async () => {
+        try {
+            doc_panel = createPreviewPanel(
+                await parseMwFile(path.join(context.extensionPath, 'media', 'help.mw')), 
+                context);
+        } catch (error) {
+            console.error("Failed to parse .mw file:", error);
+        }
+    });
+
+    context.subscriptions.push(disposable, onchange_disposable);
     
     // Register completion provider
     const completionProvider = vscode.languages.registerCompletionItemProvider(
@@ -106,7 +117,7 @@ function activate(context:vscode.ExtensionContext) {
  * @param {string} content
  * @param {vscode.ExtensionContext} context
  */
-function createPreviewPanel(content, context) {
+function createPreviewPanel(content:string, context:vscode.ExtensionContext): vscode.WebviewPanel {
     const panel = vscode.window.createWebviewPanel(
         'mwPreview', // Internal ID
         'MW File Preview', // Title

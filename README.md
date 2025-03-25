@@ -1,28 +1,10 @@
-# Myrimark Developement
+# Visual Studio Code Myrimark Extention
 
-To set up the developemnt evirement, you need
-to first install and set up a few things:
+This extention supports the use of Myrimark code,
+which is the [Myriware](https://myriware.space/) in-house
+Markup for documentation and user text. It is more advanced
+than Markdown, by implemention of assets from LaTeX and HTML.
 
-* Typescript
-* VSCE
-* Recomended Extensions
-* Node
-* Node packages
-
-Here are the folling npm commands you should follow.
-
-```console
-npm install --save-exact --save-dev esbuild
-npm install typescript --save-dev
-npm install -g @vscode/vsce
-
-npm install
-```
-
-To build the application, you can run the following code in the terminal:
-
-```console
-vsce package
-````
-
-Everything from there should work.
+You can find out more about Myrimark on the website, or
+by accessing the VSCode command palette and activating the
+Myrimark Docs Command.

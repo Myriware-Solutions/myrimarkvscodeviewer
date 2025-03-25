@@ -19,12 +19,21 @@
       {
         "command": "mwPreview.start",
         "title": "Preview Myrimark File"
+      },
+      {
+        "command": "mwPreview.documentation",
+        "title": "Open Myrimark Documentation"
       }
     ],
     "menus": {
       "editor/context": [
         {
           "command": "mwPreview.start",
+          "when": "resourceLangId == mw",
+          "group": "navigation"
+        },
+        {
+          "command": "mwPreview.documentation",
           "when": "resourceLangId == mw",
           "group": "navigation"
         }

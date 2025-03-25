@@ -14,7 +14,7 @@ export class Myrimark {
     #global_commands;
 
     /**
-     * 
+     * The Constructor for an object that is used to parse Myrimark.
      * @param {Document} doc For cross-compatablity purposes, 
      * this Class requires a reference to a DOM object for various functions.
      * If you are using this in the web, then you can safely ignore this field.

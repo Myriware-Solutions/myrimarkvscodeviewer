@@ -112,10 +112,7 @@
 		"blockcode": {
 			"name": "markup.raw.mw",
 			"begin": "^\\`",
-			"end": "$",
-			"patterns": [{
-
-			}]
+			"end": "$"
 		}
 	},
 	"scopeName": "source.mw"
