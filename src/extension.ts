@@ -21,7 +21,6 @@ type Snippet = {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context:vscode.ExtensionContext) {
-    console.log("Myrimark Extension Active!");
     let panel:vscode.WebviewPanel; // Store the webview panel
     let doc_panel:vscode.WebviewPanel;
     // Load snippets.json
@@ -49,7 +48,7 @@ function activate(context:vscode.ExtensionContext) {
 
         try {
             const parsedContent = await parseMwFile(document.uri.fsPath);
-            panel = createPreviewPanel(parsedContent, context);
+            panel = createPreviewPanel(parsedContent, context, `Myrimark Preview [${path.basename(document.fileName)}]`);
         } catch (error) {
             console.error("Failed to parse .mw file:", error);
         }
@@ -67,13 +66,13 @@ function activate(context:vscode.ExtensionContext) {
         try {
             doc_panel = createPreviewPanel(
                 await parseMwFile(path.join(context.extensionPath, 'media', 'help.mw')), 
-                context);
+                context, "Myrimark Packaged Documentation");
         } catch (error) {
-            console.error("Failed to parse .mw file:", error);
+            console.error("Failed to open Packaged Help: ", error);
         }
     });
 
-    context.subscriptions.push(disposable, onchange_disposable);
+    context.subscriptions.push(disposable, onchange_disposable, open_docs_disposable);
     
     // Register completion provider
     const completionProvider = vscode.languages.registerCompletionItemProvider(
@@ -117,10 +116,10 @@ function activate(context:vscode.ExtensionContext) {
  * @param {string} content
  * @param {vscode.ExtensionContext} context
  */
-function createPreviewPanel(content:string, context:vscode.ExtensionContext): vscode.WebviewPanel {
+function createPreviewPanel(content:string, context:vscode.ExtensionContext, title:string): vscode.WebviewPanel {
     const panel = vscode.window.createWebviewPanel(
         'mwPreview', // Internal ID
-        'MW File Preview', // Title
+        title, // Title
         vscode.ViewColumn.Beside, // Open beside the editor
         {
             enableScripts: true, // Allows JavaScript execution
@@ -130,6 +129,7 @@ function createPreviewPanel(content:string, context:vscode.ExtensionContext): vs
 
     // Load HTML content
     panel.webview.html = getWebviewContent(content, panel, context);
+    panel.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'MyrimarkLangIcon.svg'));
 
     return panel;
 }
