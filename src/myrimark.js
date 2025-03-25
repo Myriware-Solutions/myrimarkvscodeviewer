@@ -1,4 +1,10 @@
-class MyriMark {
+/**
+ * Provides a necessary class for the parsing of the Myrimark formate.
+ * This object can take in a text, formated to Myrimark, and create
+ * HTML that displays the content of the Myrimark. Should work cross-compatibly
+ * (lookout for special parameters that are needed).
+ */
+export class Myrimark {
 
     /** @type {Document} A reference to a DOM object for cross-compatibility functions.*/
     #document;
@@ -662,18 +668,16 @@ class MyriMark {
         'superscript': 'sup'
     }
 
+    /**
+     * 
+     * @param {string} content 
+     * @param {string} type 
+     * @returns {string}
+     */
     #pluginTextEffect(content, type) {
         return `<${this.#PluginFrames[type]}>${content}</${this.#PluginFrames[type]}>`;
     }
 
     //https://dev.to/rajnishkatharotiya/function-to-check-if-all-records-are-equal-in-array-javascript-3mo3
     #allEqual = arr => arr.every(val => val === arr[0]);
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { MyriMark }; // For Node.js
-} else {
-    // @ts-ignore
-    // eslint-disable-next-line
-    window.MyriMark = MyriMark;
 }

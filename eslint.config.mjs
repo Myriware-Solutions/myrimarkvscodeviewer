@@ -9,7 +9,7 @@ export default [{
             ...globals.mocha,
         },
 
-        ecmaVersion: 2022,
+        ecmaVersion: 2024,
         sourceType: "module",
     },
 

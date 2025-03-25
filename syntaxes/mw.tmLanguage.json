@@ -16,6 +16,9 @@
 		},
 		{
 			"include": "#texteffects"
+		},
+		{
+			"include": "#blockcode"
 		}
 	],
 	"repository": {
@@ -108,8 +111,11 @@
 
 		"blockcode": {
 			"name": "markup.raw.mw",
-			"begin": "^`",
-			"end": "$"
+			"begin": "^\\`",
+			"end": "$",
+			"patterns": [{
+
+			}]
 		}
 	},
 	"scopeName": "source.mw"

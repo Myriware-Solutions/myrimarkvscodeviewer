@@ -1,9 +1,35 @@
 // https://code.visualstudio.com/api/working-with-extensions/bundling-extension
 
 const esbuild = require('esbuild');
+const fs = require('fs');
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
+
+/*
+*  BEGIN JSDOM FIX
+*  https://github.com/evanw/esbuild/issues/1311
+*/
+
+ const jsdomPatch = {
+   name: 'jsdom-patch',
+   setup(build) {
+    build.onLoad({ filter: /jsdom\/living\/xhr\/XMLHttpRequest-impl\.js$/ }, async (args) => {
+       let contents = await fs.promises.readFile(args.path, 'utf8');
+ 
+       contents = contents.replace(
+         'const syncWorkerFile = require.resolve ? require.resolve("./xhr-sync-worker.js") : null;',
+        `const syncWorkerFile = "${require.resolve('jsdom/lib/jsdom/living/xhr/xhr-sync-worker.js')}";`,
+       );
+ 
+       return { contents, loader: 'js' };
+     });
+   },
+ };
+
+/*
+ * END JSDOM FIX
+*/
 
 async function main() {
   const ctx = await esbuild.context({
@@ -11,8 +37,7 @@ async function main() {
     bundle: true,
     format: 'cjs',
     minify: production,
-    //sourcemap: !production,
-    sourcemap: true,
+    sourcemap: !production,
     sourcesContent: false,
     platform: 'node',
     outfile: 'out/extension.js',
@@ -20,7 +45,8 @@ async function main() {
     logLevel: 'warning',
     plugins: [
       /* add to the end of plugins array */
-      esbuildProblemMatcherPlugin
+      esbuildProblemMatcherPlugin,
+      jsdomPatch
     ]
   });
   if (watch) {

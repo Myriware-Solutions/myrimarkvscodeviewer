@@ -1,14 +1,15 @@
-const fs = require('fs');
-const { MyriMark } = require('./myrimark.js')
-const { JSDOM } = require('jsdom');
+import fs from 'fs';
+import { Myrimark } from './myrimark';
+import { JSDOM } from 'jsdom';
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
 const { window } = dom;
 const document = window.document;
 
 /**
  * @param {fs.PathOrFileDescriptor} filePath
+ * @returns {Promise<any>}
  */
-function parseMwFile(filePath) {
+export function parseMwFile(filePath:fs.PathOrFileDescriptor): Promise<any> {
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
@@ -26,9 +27,7 @@ function parseMwFile(filePath) {
  * @param {string} rawData 
  * @returns {?HTMLDivElement}
  */
-function processMwData(rawData) {
-    const MyrimarkController = new MyriMark(document);
+function processMwData(rawData:string): HTMLDivElement|null {
+    const MyrimarkController: Myrimark = new Myrimark(document);
     return MyrimarkController.ParseMyriMark(rawData);
 }
-
-module.exports = { parseMwFile };

@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import vscode from 'vscode';
-import mwparser from './paserser.js';
+import {parseMwFile} from './paserser.ts';
 import path from 'path';
 import {JSDOM} from 'jsdom';
 import fs from 'fs';
@@ -47,7 +47,7 @@ function activate(context:vscode.ExtensionContext) {
         }
 
         try {
-            const parsedContent = await mwparser.parseMwFile(document.uri.fsPath);
+            const parsedContent = await parseMwFile(document.uri.fsPath);
             panel = createPreviewPanel(parsedContent, context);
         } catch (error) {
             console.error("Failed to parse .mw file:", error);
@@ -57,7 +57,7 @@ function activate(context:vscode.ExtensionContext) {
     // Listen for file changes
     vscode.workspace.onDidChangeTextDocument(async (event) => {
         if (panel && event.document.languageId === 'mw') {
-            const parsedContent = await mwparser.parseMwFile(event.document.uri.fsPath);
+            const parsedContent = await parseMwFile(event.document.uri.fsPath);
             panel.webview.html = getWebviewContent(parsedContent, panel, context);
         }
     });
