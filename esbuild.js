@@ -11,10 +11,11 @@ async function main() {
     bundle: true,
     format: 'cjs',
     minify: production,
-    sourcemap: !production,
+    //sourcemap: !production,
+    sourcemap: true,
     sourcesContent: false,
     platform: 'node',
-    outfile: 'extension/extension.js',
+    outfile: 'out/extension.js',
     external: ['vscode'],
     logLevel: 'warning',
     plugins: [

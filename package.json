@@ -13,7 +13,7 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./extension/extension.js",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -40,10 +40,10 @@
           "MW",
           "mw"
         ],
-        "configuration": "./language-configuration.json",
+        "configuration": "./syntaxes/language-configuration.json",
         "icon": {
-          "light": "./icon/MyrimarkLangIcon.svg",
-          "dark": "./icon/MyrimarkLangIcon.svg"
+          "light": "./media/MyrimarkLangIcon.svg",
+          "dark": "./media/MyrimarkLangIcon.svg"
         }
       }
     ],
@@ -68,6 +68,7 @@
     "package": "npm run check-types && node esbuild.js --production"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.7",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
     "@types/vscode": "^1.98.0",

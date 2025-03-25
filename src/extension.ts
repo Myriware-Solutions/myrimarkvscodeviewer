@@ -1,32 +1,31 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-const vscode = require('vscode');
-const mwparser = require('./paserser.js');
-const path = require('path');
-const { JSDOM } = require('jsdom');
-const fs = require('fs');
+import vscode from 'vscode';
+import mwparser from './paserser.js';
+import path from 'path';
+import {JSDOM} from 'jsdom';
+import fs from 'fs';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 
-/**
- * @typedef {Object} Snippet
- * @property {string} label The Label that appears for this Snippet.
- * @property {string} wordMatch The Word that best describes the Snippet (label without symbols).
- * @property {string} insertText Text that will get autofilled.
- * @property {string} detail Details about the Snippet's function.
- * @property {string} detailHeader Header for the Hover
- */
+type Snippet = {
+    label: string,
+    wordMatch: string,
+    insertText: string,
+    detail: string,
+    detailHeader: string
+}
 
 /**
  * @param {vscode.ExtensionContext} context
  */
-function activate(context) {
-    let panel; // Store the webview panel
+function activate(context:vscode.ExtensionContext) {
+    console.log("Myrimark Extension Active!");
+    let panel:vscode.WebviewPanel; // Store the webview panel
     // Load snippets.json
-    const snippetsPath = path.join(context.extensionPath, 'snippets.json');
-    /** @type {Snippet[]} */
-    let snippets = [];
+    const snippetsPath = path.join(context.extensionPath, 'media', 'snippets.json');
+    let snippets: Snippet[] = [];
     try {
         const data = fs.readFileSync(snippetsPath, 'utf8');
         snippets = JSON.parse(data);
@@ -78,7 +77,7 @@ function activate(context) {
                 });
             }
         },
-        "$", ":", '\\' // Trigger on $ and :
+        "$", ":", '\\' // Triggers
     );
 
     // Register hover provider
