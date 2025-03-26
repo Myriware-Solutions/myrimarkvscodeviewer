@@ -132,7 +132,8 @@ export class Myrimark {
             'local_param': /{(.+?)}/gm
         },
         'header': /^(#+) *(.*)/mg,
-        'globalcommand': /^\\(\w+)/gm
+        'globalcommand': /^\\(\w+)/gm,
+        'comments': /^(?<!\\)%.*$/gm
     }
 
     #ValidGlobalCommands = [
@@ -148,7 +149,7 @@ export class Myrimark {
     }
 
     #SimpleGlobalSymbols = {
-        '\n': /(?<!\\)\\par\b/gm,
+        '\n\n': /(?<!\\)\\par\b/gm,
         '\u0009': /(?<!\\)\\indent\b/gm
     }
 
@@ -163,6 +164,18 @@ export class Myrimark {
             return_text = return_text.replace(symbol, replace);
         }
         return return_text;
+    }
+
+    /**
+     * Removes the text from a string.
+     * @param {string} text 
+     * @returns {string}
+     */
+    #removeComments(text) {
+        let return_text = text;
+        this.#regexSearch(text, this.#Regexes.comments, (g) => {
+            return_text = return_text.replace(g[0], '');
+        });
     }
 
     /**
