@@ -113,6 +113,19 @@
 			"name": "markup.raw.mw",
 			"begin": "^\\`",
 			"end": "$"
+		},
+
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.mw",
+					"match": "(?<!\\\\)%\\[.*(?<!\\\\)\\]%"
+				},
+				{
+					"name": "comment.block.mw",
+					"match": " +(?<!\\\\)%%.*$"
+				}
+			]
 		}
 	},
 	"scopeName": "source.mw"

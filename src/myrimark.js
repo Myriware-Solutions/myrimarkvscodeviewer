@@ -133,7 +133,8 @@ export class Myrimark {
         },
         'header': /^(#+) *(.*)/mg,
         'globalcommand': /^\\(\w+)/gm,
-        'comments': /^(?<!\\)%.*$/gm
+        'block_comments': /(?<!\\)%\[.*(?<!\\)\]%/gm,
+        'singleline_comments': / *(?<!\\)%%.*$/gm
     }
 
     #ValidGlobalCommands = [
@@ -173,9 +174,13 @@ export class Myrimark {
      */
     #removeComments(text) {
         let return_text = text;
-        this.#regexSearch(text, this.#Regexes.comments, (g) => {
+        this.#regexSearch(text, this.#Regexes.block_comments, (g) => {
             return_text = return_text.replace(g[0], '');
         });
+        this.#regexSearch(text, this.#Regexes.singleline_comments, (g) => {
+            return_text = return_text.replace(g[0], '');
+        });
+        return return_text;
     }
 
     /**
@@ -186,7 +191,10 @@ export class Myrimark {
      * @returns {?HTMLDivElement}
      */
     ParseMyriMark(bodyText) {
-        const workingBodyText = bodyText.replace(/\r/gm, '');
+        // Remove unwanted information
+        let workingBodyText = bodyText.replace(/\r/gm, '');
+        workingBodyText = this.#removeComments(workingBodyText);
+        // Begin parsing
         const sections = this.#condense(this.#breakUp(workingBodyText));
         this.#header_levels = {
             "h1": 0,
