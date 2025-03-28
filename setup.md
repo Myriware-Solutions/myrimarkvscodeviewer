@@ -9,6 +9,11 @@ to first install and set up a few things:
 * Node
 * Node packages
 
+NOTE: Now the myrimark.js file is not provided in this repo.
+Please clone the Myriware-Solutions/modules.myrimark repo and
+create a link to the myrimark.js file. That way, all updates will 
+work for myrimark across all applications.
+
 Here are the folling npm commands you should follow.
 
 ```console
