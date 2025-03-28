@@ -12,6 +12,10 @@ export class Myrimark {
     #header_levels;
     /** @type {string[]} Stores all of the active commands, globally. */
     #global_commands;
+    /** @type {Object.<string, string>} Stores strings that are used in command inputs */
+    #strings={};
+    /** @type {Object.<string, string[]>} User bin for storing info for the REPEAT local command */
+    #objectStash={}
 
     /**
      * The Constructor for an object that is used to parse Myrimark.
@@ -134,7 +138,8 @@ export class Myrimark {
         'header': /^(#+) *(.*)/mg,
         'globalcommand': /^\\(\w+)/gm,
         'block_comments': /(?<!\\)%\[.*(?<!\\)\]%/gm,
-        'singleline_comments': / *(?<!\\)%%.*$/gm
+        'singleline_comments': / *(?<!\\)%%.*$/gm,
+        'strings': /(?<={)"([\w\W]*?)"(?=})/gm
     }
 
     #ValidGlobalCommands = [
@@ -175,13 +180,28 @@ export class Myrimark {
      */
     #removeComments(text) {
         let return_text = text;
-        this.#regexSearch(text, this.#Regexes.block_comments, (g) => {
+        this.regexSearch(text, this.#Regexes.block_comments, (g) => {
             return_text = return_text.replace(g[0], '');
         });
-        this.#regexSearch(text, this.#Regexes.singleline_comments, (g) => {
+        this.regexSearch(text, this.#Regexes.singleline_comments, (g) => {
             return_text = return_text.replace(g[0], '');
         });
         return return_text;
+    }
+    /**
+     * Replaces all command inputs strings
+     * with an identifier.
+     * @param {string} input 
+     * @returns {string}
+     */
+    #stashStrings(input) {
+        let output = input;
+        this.regexSearch(output, this.#Regexes.strings, (gs) => {
+            const sid = "0x" + Object.keys(this.#strings).length;
+            this.#strings[sid] = gs[1];
+            output = output.replace(gs[0], sid);
+        });
+        return output;
     }
 
     /**
@@ -195,6 +215,9 @@ export class Myrimark {
         // Remove unwanted information
         let workingBodyText = bodyText.replace(/\r/gm, '');
         workingBodyText = this.#removeComments(workingBodyText);
+        this.#strings = {};
+        this.#objectStash={};
+        workingBodyText = this.#stashStrings(workingBodyText);
         // Begin parsing
         const sections = this.#condense(this.#breakUp(workingBodyText));
         this.#header_levels = {
@@ -264,7 +287,7 @@ export class Myrimark {
                 case 'null':
                 break;
                 case 'localcommand':
-                    this.#regexSearch(paragraph, this.#Regexes.commands.local_body, (g) => {
+                    this.regexSearch(paragraph, this.#Regexes.commands.local_body, (g) => {
                         const cmd_name = g[1];
                         const cmd_param_string = g[2]
                         const element = this.#makeSingleLineCommand(cmd_name, cmd_param_string, return_body);
@@ -275,7 +298,7 @@ export class Myrimark {
                     });
                 break;
                 case 'header':
-                    this.#regexSearch(paragraph, this.#Regexes.header, (g) => {
+                    this.regexSearch(paragraph, this.#Regexes.header, (g) => {
                         const header_level = g[1].length;
                         if (this.#global_commands.includes('AutoIndexHeaders')) {
                             this.#header_levels[`h${header_level}`]++;
@@ -483,6 +506,40 @@ export class Myrimark {
                 break;
             }
             return null;
+        },
+        'vardump': (rb) => {
+            const pre = this.#document.createElement('pre');
+            pre.innerHTML = JSON.stringify(this.#strings, null, 2);
+            pre.innerHTML += JSON.stringify(this.#objectStash, null, 2);
+            return pre;
+        },
+        /**
+         * 
+         * @param {*} rb 
+         * @param {string} varname 
+         * @param {string} valueString 
+         */
+        'stash': (rb, varname, valueString) => {
+            let list = [];
+            this.regexSearch(valueString, /'(.*?)'/gm, (gs) => {
+                list.push(gs[1]);
+            });
+            this.#objectStash[varname] = list;
+            return `<p>STASHED ${varname} with ${JSON.stringify(list)}</p>`;
+        },
+        /**
+         * 
+         * @param {*} rb 
+         * @param {string} commandString 
+         * @param {string} listName 
+         * @param {string} optionalCommands
+         */
+        'repeat': (rb, commandString, listName, optionalCommands="") => {
+            let local_myrimark=optionalCommands+"\n\n";
+            for (const item of this.#objectStash[listName]) {
+                local_myrimark+=commandString.replace('|$|', item)+"\n";
+            }
+            return this.ParseMyriMark(local_myrimark);
         }
     }
 
@@ -494,7 +551,13 @@ export class Myrimark {
      * @returns {HTMLElement|string|Text}
      */
     #makeSingleLineCommand(commandName, parameterString, returnBody) {
-        let parameters = this.#regexMatchContents(parameterString, this.#Regexes.commands.local_param);
+        let parameterStringWorking = parameterString;
+        let parameters = this.#regexMatchContents(parameterStringWorking, this.#Regexes.commands.local_param);
+        for (let i=0; i<parameters.length; i++) {
+            this.regexSearch(parameters[i], /0x(\d+)/gm, (gs) => {
+                parameters[i] = this.#strings[gs[0]];
+            });
+        }
         if (!Object.keys(this.#LocalCommands).includes(commandName)) 
             return this.#document.createTextNode(`${commandName} (${JSON.stringify(parameters)}) is not a valid local command.`);
         return this.#LocalCommands[commandName]((returnBody.parentElement) ? returnBody.parentElement : returnBody, ...parameters);
@@ -539,7 +602,7 @@ export class Myrimark {
      * @param {RegExp} regexReference
      * @param {RegexSearchCallback} callback 
      */
-    #regexSearch(string, regexReference, callback) {
+    regexSearch(string, regexReference, callback) {
         const regex = structuredClone(regexReference);
         let m;
         while ((m = regex.exec(string)) !== null) {
@@ -555,6 +618,7 @@ export class Myrimark {
      * 
      * @param {string} string 
      * @param {RegExp} regexReference 
+     * @returns {string[]}
      */
     #regexMatchContents(string, regexReference) {
         const regex = structuredClone(regexReference);
@@ -665,7 +729,7 @@ export class Myrimark {
         let fline = line+'';
         //command-type styles
         for (const [type, regex] of Object.entries(this.#Regexes.cmd_line)) {
-            this.#regexSearch(fline, regex, (g) => {
+            this.regexSearch(fline, regex, (g) => {
                 let filler;
                 switch (type) {
                     case "stacked_scripts":
