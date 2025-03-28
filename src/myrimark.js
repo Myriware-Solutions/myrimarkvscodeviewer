@@ -139,7 +139,8 @@ export class Myrimark {
 
     #ValidGlobalCommands = [
         "AutoIndexHeaders",
-        "EveryLineBreaks"
+        "EveryLineBreaks",
+        "HideImageErrors"
     ]
 
     #GlobalFunctionCommands = {
@@ -363,23 +364,56 @@ export class Myrimark {
 
     #LocalCommands = {
         /**
-         * 
+         * ChatGPT modified.
          * @param {HTMLDivElement} rb 
          * @param {string} url 
          * @param {number|string} scale 
          * @returns {HTMLImageElement}
          */
-        'image': (rb, url, scale=1) => {
+        'image': (rb, url, scale = 1) => {
             if (typeof scale === 'string') scale = parseFloat(scale);
+            const container = this.#document.createElement('div');
+
             const image = this.#document.createElement('img');
             image.src = url;
+            image.style.display = 'none'; // Hide initially
+
+            const errorText = this.#document.createElement('span');
+            errorText.textContent = 'Error: Unable to load image: ' + url;
+            errorText.style.color = 'red';
+            errorText.style.display = 'none';
+
             image.onload = () => {
                 let width = image.width * scale;
                 let height = image.height * scale;
                 image.width = width;
                 image.height = height;
-            }
-            return image;
+                image.style.display = 'block'; // Show the image
+                errorText.style.display = 'none'; // Hide error text
+            };
+
+            image.onerror = () => {
+                image.style.display = 'none'; // Hide image
+                if (!this.#global_commands.includes('HideImageErrors'))
+                    errorText.style.display = 'block'; // Show error text
+            };
+
+            container.appendChild(image);
+            container.appendChild(errorText);
+            
+            return container;
+        },
+        /**
+         * 
+         * @param {HTMLDivElement} rb 
+         * @param {string} id 
+         * @param {string} title
+         */
+        'anchor': (rb, id, text) => {
+            const p = this.#document.createElement('p');
+            p.id = id;
+            p.innerText = this.#formatLine(text);
+            return p;
         },
         'center': (rb, text) => {
             const div = this.#document.createElement('div');
