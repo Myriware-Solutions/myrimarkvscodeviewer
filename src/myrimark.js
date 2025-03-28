@@ -129,14 +129,14 @@ export class Myrimark {
             'code_line': /(?<!\\)`(.*?)(?<!\\)`/gm
         },
         'adv_line': {
-            'hyperlink': /\[(.+)\]\((.+)\)/gm,
+            'hyperlink': /\[(.+?)\]\((.+?)\)/gm,
         },
         'commands': {
-            'local_body': /:(\w+)(.*)/gm,
+            'local_body': /:([\w.]+)(.*)/gm,
             'local_param': /{(.+?)}/gm
         },
         'header': /^(#+) *(.*)/mg,
-        'globalcommand': /^\\(\w+)/gm,
+        'globalcommand': /^\\([\w.]+)/gm,
         'block_comments': /(?<!\\)%\[.*(?<!\\)\]%/gm,
         'singleline_comments': / *(?<!\\)%%.*$/gm,
         'strings': /(?<={)"([\w\W]*?)"(?=})/gm
@@ -145,13 +145,13 @@ export class Myrimark {
     #ValidGlobalCommands = [
         "AutoIndexHeaders",
         "EveryLineBreaks",
-        "HideImageErrors"
+        "HideImageErrors",
+        "LocalDebug"
     ]
 
     #GlobalFunctionCommands = {
-        'ResetHeaderIndexes': function (headerLevelsObject) {
-            for (const key of Object.keys(headerLevelsObject))
-                headerLevelsObject[key] = 0;
+        'ResetHeaderIndexes': (headerLevelsObject) => {
+            for (const key of Object.keys(headerLevelsObject)) headerLevelsObject[key] = 0;
         }
     }
 
@@ -204,22 +204,9 @@ export class Myrimark {
         return output;
     }
 
-    /**
-     * Takes a string of text, and parses it for Myrimark. 
-     * If there is nothing that fits
-     * Myrimark, or there is an error, it will return null.
-     * @param {string} bodyText Text that will be parsed as Myrimark.
-     * @returns {?HTMLDivElement}
-     */
-    ParseMyriMark(bodyText) {
-        // Remove unwanted information
-        let workingBodyText = bodyText.replace(/\r/gm, '');
-        workingBodyText = this.#removeComments(workingBodyText);
+    #init() {
         this.#strings = {};
         this.#objectStash={};
-        workingBodyText = this.#stashStrings(workingBodyText);
-        // Begin parsing
-        const sections = this.#condense(this.#breakUp(workingBodyText));
         this.#header_levels = {
             "h1": 0,
             "h2": 0,
@@ -229,7 +216,45 @@ export class Myrimark {
             "h6": 0
         };
         this.#global_commands = [];
-        return this.#parse(sections, null);
+    }
+
+    /**
+     * Allows for synchronously process of Myrimark
+     * and its output. Since the actual process needs to be
+     * asnyc, this will concurrently and place the output
+     * in the desired location.
+     * @param {string} bodyText Myrimark text to be processed
+     * @param {HTMLElement} location HTMLElement representing the location
+     * for the output.
+     * @param {boolean} clearLocation Whether or not to clear the contents of
+     * the output location. Defualty true.
+     */
+    async PlaceOutput(bodyText, location, clearLocation=true) {
+        const output = await this.ParseMyriMark(bodyText);
+        if (clearLocation) location.innerHTML="";
+        location.append(output);
+    }
+
+    /**
+     * Takes a string of text, and parses it for Myrimark. 
+     * If there is nothing that fits
+     * Myrimark, or there is an error, it will return null.
+     * Please note and respect the ASYNC nature of this function.
+     * Make sure to AWAIT for it's result, otherwise, all you
+     * will get is a promise and no formated text.
+     * @async
+     * @param {string} bodyText Text that will be parsed as Myrimark.
+     * @returns {?HTMLDivElement}
+     */
+    async ParseMyriMark(bodyText) {
+        this.#init();
+        // Remove unwanted information
+        let workingBodyText = bodyText.replace(/\r/gm, '');
+        workingBodyText = this.#removeComments(workingBodyText);
+        workingBodyText = this.#stashStrings(workingBodyText);
+        // Begin parsing
+        const sections = this.#condense(this.#breakUp(workingBodyText));
+        return await this.#parse(sections, null);
     }
 
     /**
@@ -238,13 +263,13 @@ export class Myrimark {
      * @param {HTMLDivElement} parent
      * @returns {?HTMLDivElement}
      */
-    #parse(stringSections, parent=null) {
+    async #parse(stringSections, parent=null) {
         const body = this.#document.createElement('div');
         for (const section of stringSections) {
             if (typeof section === 'string')
-                this.ParseMyriMarkSection(section, body);
+                await this.ParseMyriMarkSection(section, body);
             else {
-                this.#parse(section, body);
+                await this.#parse(section, body);
             }
         }
         if (parent) parent.append(body);
@@ -259,7 +284,7 @@ export class Myrimark {
      * @param {HTMLDivElement} parent Parent element used for nesting.
      * @returns {?HTMLDivElement}
      */
-    ParseMyriMarkSection(myrimark_text, parent=null) {
+    async ParseMyriMarkSection(myrimark_text, parent=null) {
         let body = this.#removeExcessWhiteSpace(myrimark_text);
         body = this.#replaceGlobalSymbols(body);
         const paragraphs = body.split(this.#Regexes.seperators.paragraphs);
@@ -287,14 +312,16 @@ export class Myrimark {
                 case 'null':
                 break;
                 case 'localcommand':
-                    this.regexSearch(paragraph, this.#Regexes.commands.local_body, (g) => {
+                    await this.#asyncRegexSearch(paragraph, this.#Regexes.commands.local_body, async (g) => {
                         const cmd_name = g[1];
                         const cmd_param_string = g[2]
-                        const element = this.#makeSingleLineCommand(cmd_name, cmd_param_string, return_body);
-                            if (element) {
-                                if (typeof element == 'string') return_body.innerHTML += element;
-                                else return_body.append(element);
-                            }
+                        const element = await this.#makeSingleLineCommand(cmd_name, cmd_param_string, return_body);
+                        if (element) {
+                            if (typeof element == 'string') return_body.innerHTML += element;
+                            //Ensure Promises do not get Printed
+                            else if (typeof element === 'object' && element !== null && typeof element.then !== 'function') 
+                                return_body.append(element);
+                        }
                     });
                 break;
                 case 'header':
@@ -385,7 +412,41 @@ export class Myrimark {
         }
     }
 
+    async #loadModuleFromURL(url) {
+        try {
+            const module = await import(url);
+            return module;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     #LocalCommands = {
+        /**
+         * 
+         * @param {*} rb 
+         * @param {string} moduleName 
+         * @param {string} localName 
+         * @returns {null}
+         */
+        'import': async (rb, moduleName, localName=null) => {
+            localName = (localName)?localName:moduleName;
+            let url = "";
+            if (this.#global_commands.includes('LocalDebug'))
+                url = `/import/import.php?name=${moduleName}`;
+            else url = `TODO${moduleName}`;
+            const mod = await this.#loadModuleFromURL(url);
+            // Add commands
+            for (const [name, local_command] of Object.entries(mod.LocalCommands)) {
+                this.#LocalCommands[`${localName}.${name}`] = local_command;
+            }
+            for (const [name, global_command] of Object.entries(mod.GlobalCommands)) {
+                if (global_command)
+                    this.#GlobalFunctionCommands[`${localName}.${name}`] = global_command;
+                else this.#ValidGlobalCommands.push(name);
+            }
+            return null;
+        },
         /**
          * ChatGPT modified.
          * @param {HTMLDivElement} rb 
@@ -438,10 +499,10 @@ export class Myrimark {
             p.innerText = this.#formatLine(text);
             return p;
         },
-        'center': (rb, text) => {
+        'center': async (rb, text) => {
             const div = this.#document.createElement('div');
             div.classList.add('justify', 'center');
-            div.append(this.ParseMyriMarkSection(text, null));
+            div.append(await this.ParseMyriMarkSection(text, null));
             return div;
         },
         /**
@@ -525,7 +586,7 @@ export class Myrimark {
                 list.push(gs[1]);
             });
             this.#objectStash[varname] = list;
-            return `<p>STASHED ${varname} with ${JSON.stringify(list)}</p>`;
+            return null;
         },
         /**
          * 
@@ -550,7 +611,7 @@ export class Myrimark {
      * @param {HTMLDivElement} returnBody
      * @returns {HTMLElement|string|Text}
      */
-    #makeSingleLineCommand(commandName, parameterString, returnBody) {
+    async #makeSingleLineCommand(commandName, parameterString, returnBody) {
         let parameterStringWorking = parameterString;
         let parameters = this.#regexMatchContents(parameterStringWorking, this.#Regexes.commands.local_param);
         for (let i=0; i<parameters.length; i++) {
@@ -558,9 +619,11 @@ export class Myrimark {
                 parameters[i] = this.#strings[gs[0]];
             });
         }
-        if (!Object.keys(this.#LocalCommands).includes(commandName)) 
+        if (!Object.keys(this.#LocalCommands).includes(commandName)) {
             return this.#document.createTextNode(`${commandName} (${JSON.stringify(parameters)}) is not a valid local command.`);
-        return this.#LocalCommands[commandName]((returnBody.parentElement) ? returnBody.parentElement : returnBody, ...parameters);
+        }
+        const ret = await this.#LocalCommands[commandName]((returnBody.parentElement) ? returnBody.parentElement : returnBody, ...parameters);
+        return ret;
     }
     
     /**
@@ -597,6 +660,13 @@ export class Myrimark {
      */
 
     /**
+     * @async
+     * @callback AsyncRegexSearchCallback
+     * @param {string[]} groups
+     * @returns {void}
+     */
+
+    /**
      * 
      * @param {string} string 
      * @param {RegExp} regexReference
@@ -610,6 +680,24 @@ export class Myrimark {
             let groups = [];
             m.forEach((match) => { groups.push(match); });
             callback(groups);
+        }
+        return true;
+    }
+
+    /**
+     * 
+     * @param {string} string 
+     * @param {RegExp} regexReference
+     * @param {AsyncRegexSearchCallback} callback 
+     */
+    async #asyncRegexSearch(string, regexReference, callback) {
+        const regex = structuredClone(regexReference);
+        let m;
+        while ((m = regex.exec(string)) !== null) {
+            if (m.index === regex.lastIndex) regex.lastIndex++;
+            let groups = [];
+            m.forEach((match) => { groups.push(match); });
+            await callback(groups);
         }
         return true;
     }
