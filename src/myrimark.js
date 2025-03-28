@@ -537,7 +537,7 @@ export class Myrimark {
         'repeat': (rb, commandString, listName, optionalCommands="") => {
             let local_myrimark=optionalCommands+"\n\n";
             for (const item of this.#objectStash[listName]) {
-                local_myrimark+=commandString.replace('|$|', item)+"\n";
+                local_myrimark+=commandString.replaceAll('|$|', item)+"\n";
             }
             return this.ParseMyriMark(local_myrimark);
         }
